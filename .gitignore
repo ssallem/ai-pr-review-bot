@@ -42,3 +42,7 @@ Thumbs.db
 # mypy / ruff
 .mypy_cache/
 .ruff_cache/
+
+# Claude / Serena 내부 도구
+.serena/
+.claude/

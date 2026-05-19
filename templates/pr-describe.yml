@@ -44,8 +44,8 @@ jobs:
           if [ -f pyproject.toml ]; then
             pip install -e .
           else
-            git clone https://github.com/ssallem/ai-pr-review-toolkit.git /tmp/ai-pr-review-toolkit
-            pip install -e /tmp/ai-pr-review-toolkit
+            git clone https://github.com/ssallem/ai-pr-review-bot.git /tmp/ai-pr-review-bot
+            pip install -e /tmp/ai-pr-review-bot
             # PyPI 게시 후: pip install ai-pr-review-toolkit
           fi
 
