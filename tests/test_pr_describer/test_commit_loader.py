@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import subprocess
 from typing import Any
-from unittest.mock import MagicMock
 
 import httpx
 import pytest

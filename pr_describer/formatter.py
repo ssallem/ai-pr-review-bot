@@ -18,7 +18,7 @@ _RED = "\x1b[31m"
 _DIM = "\x1b[2m"
 
 
-def format_full_markdown(desc: "PRDescription") -> str:
+def format_full_markdown(desc: PRDescription) -> str:
     """GitHub PR body에 그대로 붙여넣을 마크다운.
 
     title은 description 본문에 포함시키지 않음 — GitHub는 title을 별도 필드로 받기 때문.
@@ -35,7 +35,7 @@ def format_full_markdown(desc: "PRDescription") -> str:
 
 
 def format_changelog_entry(
-    desc: "PRDescription", *, today: date | None = None
+    desc: PRDescription, *, today: date | None = None
 ) -> str:
     """CHANGELOG.md 맨 위에 prepend할 한 줄.
 
@@ -47,7 +47,7 @@ def format_changelog_entry(
     return f"- {today.isoformat()} ({type_label}): {entry}\n"
 
 
-def format_terminal(desc: "PRDescription", *, color: bool = True) -> str:
+def format_terminal(desc: PRDescription, *, color: bool = True) -> str:
     """사람이 터미널에서 보기 좋게 — 색은 옵션."""
 
     def c(code: str, text: str) -> str:

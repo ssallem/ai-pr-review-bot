@@ -97,7 +97,7 @@ def _count_changes(hunk_text: str) -> tuple[int, int]:
     additions = 0
     deletions = 0
     for line in hunk_text.splitlines():
-        if line.startswith("+++") or line.startswith("---"):
+        if line.startswith(("+++", "---")):
             continue
         if line.startswith("+"):
             additions += 1

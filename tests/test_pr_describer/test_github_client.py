@@ -14,7 +14,6 @@ from pr_describer.github_client import (
     update_pr,
 )
 
-
 # ---------- httpx mock 헬퍼 ----------------------------------------------------
 
 

@@ -17,7 +17,6 @@ from pr_describer import cli as cli_module
 from pr_describer.commit_loader import CommitsPayload
 from pr_describer.describer import PRDescription
 
-
 # ---------- 공용 fixture ------------------------------------------------------
 
 

@@ -2,8 +2,10 @@
 
 > Claude로 한국어 PR 리뷰·설명·체인지로그를 자동화하는 CLI · GitHub Action 도구
 
+[![CI](https://github.com/ssallem/ai-pr-review-bot/actions/workflows/ci.yml/badge.svg)](https://github.com/ssallem/ai-pr-review-bot/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
 
 **라이브 데모 · 사용 가이드:** [ai-review-kit.pages.dev](https://ai-review-kit.pages.dev/)
 

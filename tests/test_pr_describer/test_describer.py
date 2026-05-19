@@ -14,7 +14,6 @@ import pytest
 from pr_describer.commit_loader import Commit, CommitsPayload
 from pr_describer.describer import PRDescription, describe_pr
 
-
 # ---------- 테스트 헬퍼 ----------------------------------------------------------
 
 
