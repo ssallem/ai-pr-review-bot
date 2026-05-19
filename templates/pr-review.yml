@@ -1,0 +1,53 @@
+# GitHub Actions 워크플로우 — Claude 자동 PR 코드 리뷰
+#
+# 사용법:
+#   1. 이 파일을 사용자 저장소의 .github/workflows/pr-review.yml 로 복사
+#   2. Settings → Secrets and variables → Actions 에 ANTHROPIC_API_KEY 등록
+#      (GITHUB_TOKEN은 GitHub Actions가 자동 주입하므로 별도 설정 불필요)
+#   3. PR 열기 또는 푸시하면 자동으로 Claude 리뷰 댓글이 달림
+#
+# critical 이슈가 있으면 워크플로우가 실패 (exit 1) — 머지 차단 룰과 연동 가능
+
+name: Claude PR Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Checkout (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install ai-pr-review-toolkit
+        # 현재 PyPI 미게시 — GitHub에서 직접 설치. 정식 게시되면 아래 PyPI 옵션의 주석만 풀면 됨.
+        run: |
+          python -m pip install --upgrade pip
+          # 1) 현재 권장: GitHub에서 직접 설치
+          git clone https://github.com/ssallem/ai-pr-review-toolkit.git
+          python -m pip install -e ./ai-pr-review-toolkit
+          # 2) PyPI 정식 게시 후 (현재 미게시 — 게시되면 위 git clone 두 줄을 지우고 아래 한 줄만 활성화)
+          # python -m pip install ai-pr-review-toolkit
+
+      - name: Run Claude PR review
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr-review \
+            --pr ${{ github.repository }}#${{ github.event.pull_request.number }} \
+            --post \
+            --output md

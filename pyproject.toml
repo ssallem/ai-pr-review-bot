@@ -1,0 +1,72 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai-pr-review-toolkit"
+version = "0.1.0"
+description = "AI-powered toolkit for automating PR code review and PR description/changelog generation using Claude."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+    { name = "FirstNode", email = "ssallem@kakao.com" }
+]
+keywords = ["claude", "anthropic", "github", "pr", "code-review", "automation"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Quality Assurance",
+]
+dependencies = [
+    "anthropic>=0.40",
+    "click>=8.1",
+    "httpx>=0.27",
+    "pydantic>=2.8",
+    "pydantic-settings>=2.4",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-mock>=3.12",
+    "pytest-asyncio>=0.23",
+    "pytest-cov>=5.0",
+    "ruff>=0.5",
+]
+
+[project.scripts]
+pr-review = "pr_reviewer.cli:main"
+pr-describe = "pr_describer.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/ssallem/ai-pr-review-bot"
+Issues = "https://github.com/ssallem/ai-pr-review-bot/issues"
+Documentation = "https://ai-review-kit.pages.dev/"
+
+[tool.setuptools]
+packages = ["pr_reviewer", "pr_describer"]
+
+[tool.setuptools.package-data]
+"*" = ["templates/*.yml"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "N"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = "-ra --strict-markers"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]

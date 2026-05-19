@@ -1,0 +1,76 @@
+name: PR Describe (Claude)
+
+# pr_describer 자동화: PR이 열리면 Claude가 title/body/changelog를 생성하고
+# PR을 업데이트한다. synchronize 트리거는 추가 비용이 발생하므로 기본 비활성.
+on:
+  pull_request:
+    types:
+      - opened
+      # - synchronize  # 매 푸시마다 갱신하려면 주석 해제
+      # - reopened
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "수동 실행 시 대상 PR 번호"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  describe:
+    name: Generate PR description with Claude
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # base..head diff 비교를 위해 전체 히스토리 필요
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install pr-describer
+        # 현재 PyPI 미게시 — 동일 저장소(pyproject.toml)면 editable, 아니면 GitHub에서 직접 clone.
+        # 정식 게시되면 fallback의 `git clone` 대신 `pip install ai-pr-review-toolkit` 한 줄로 단순화 가능.
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f pyproject.toml ]; then
+            pip install -e .
+          else
+            git clone https://github.com/ssallem/ai-pr-review-toolkit.git /tmp/ai-pr-review-toolkit
+            pip install -e /tmp/ai-pr-review-toolkit
+            # PyPI 게시 후: pip install ai-pr-review-toolkit
+          fi
+
+      - name: Resolve PR number
+        id: pr
+        env:
+          EVENT_PR_NUMBER: ${{ github.event.pull_request.number }}
+          INPUT_PR_NUMBER: ${{ github.event.inputs.pr_number }}
+        run: |
+          if [ -n "$EVENT_PR_NUMBER" ]; then
+            echo "number=$EVENT_PR_NUMBER" >> "$GITHUB_OUTPUT"
+          else
+            echo "number=$INPUT_PR_NUMBER" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run pr-describe
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CLAUDE_MODEL: ${{ vars.CLAUDE_MODEL || 'claude-sonnet-4-6' }}
+        run: |
+          set -euo pipefail
+          REPO_FULL="${{ github.repository }}"
+          PR_REF="${REPO_FULL}#${{ steps.pr.outputs.number }}"
+          pr-describe \
+            --from-github "$PR_REF" \
+            --update "$PR_REF" \
+            --output md
